@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Stock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        main {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .result th, .result td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .result th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Consulta de Stock</h1>
+    </header>
+    <main>
+        <form id="stockForm">
+            <div class="form-group">
+                <label for="storeCode">Seleccione la sucursal:</label>
+                <select id="storeCode" name="storeCode">
+                    <option value="">--Seleccione una sucursal--</option>
+                    <option value="0202">COLISEUM ARAUCO MAIPU</option>
+                    <option value="0208">COLISEUM ARICA</option>
+                    <option value="0207">COLISEUM COQUIMBO</option>
+                    <option value="0205">COLISEUM IQUIQUE</option>
+                    <option value="0209">COLISEUM OSORNO</option>
+                    <option value="0206">COLISEUM PLAZA NORTE</option>
+                    <option value="0201">COLISEUM PLAZA OESTE</option>
+                    <option value="0204">COLISEUM TEMUCO</option>
+                    <option value="0106">CONVERSE ALTO LAS CONDES</option>
+                    <option value="0110">CONVERSE ANTOFAGASTA</option>
+                    <option value="0108">CONVERSE CONCEPCION</option>
+                    <option value="0107">CONVERSE COSTANERA</option>
+                    <option value="0109">CONVERSE FLORIDA</option>
+                    <option value="0606">CONVERSE FS SAN PEDRO DE LA PAZ</option>
+                    <option value="0114">CONVERSE IMPERIO</option>
+                    <option value="0115">CONVERSE INDEPENDENCIA</option>
+                    <option value="0101">CONVERSE LA DEHESA</option>
+                    <option value="0111">CONVERSE LA SERENA</option>
+                    <option value="0113">CONVERSE LOS DOMINICOS</option>
+                    <option value="0112">CONVERSE MARINA ARAUCO</option>
+                    <option value="0103">CONVERSE PARQUE ARAUCO</option>
+                    <option value="0104">CONVERSE PLAZA OESTE</option>
+                    <option value="0105">CONVERSE PLAZA TREBOL</option>
+                    <option value="0102">CONVERSE PLAZA VESPUCIO</option>
+                    <option value="0116">CONVERSE PUERTO MONTT</option>
+                    <option value="0117">CONVERSE TEMUCO</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productCode">Código de barra o código de producto:</label>
+                <input type="text" id="productCode" name="productCode" placeholder="Ejemplo: 123456789" required>
+            </div>
+            <div class="form-group">
+                <label for="scanBarcode">Escanear código de barra:</label>
+                <input type="text" id="scanBarcode" name="scanBarcode" placeholder="Escanea el código aquí">
+            </div>
+            <button type="button" onclick="fetchStock()">Consultar Stock</button>
+        </form>
+
+        <div class="result" id="result">
+            <!-- Los resultados de la consulta aparecerán aquí -->
+        </div>
+    </main>
+
+    <script>
+        const mockStockData = [
+            { modelo: "Camiseta", color: "Rojo", talla: "M", stock: 25, sucursal: "0202" },
+            { modelo: "Camiseta", color: "Azul", talla: "L", stock: 10, sucursal: "0208" },
+            { modelo: "Pantalón", color: "Negro", talla: "S", stock: 15, sucursal: "0207" },
+            { modelo: "Zapatos", color: "Blanco", talla: "42", stock: 8, sucursal: "0106" },
+        ];
+
+        function fetchStock() {
+            const storeCode = document.getElementById("storeCode").value;
+            const code = document.getElementById("productCode").value.trim() || document.getElementById("scanBarcode").value.trim();
+
+            if (!storeCode) {
+                alert("Por favor, seleccione una sucursal.");
+                return;
+            }
+
+            if (!code) {
+                alert("Por favor, ingresa un código o escanea uno válido.");
+                return;
+            }
+
+            // Filtrar datos por código de sucursal y código de producto
+            const filteredStock = mockStockData.filter(item => item.sucursal === storeCode && item.modelo.includes(code));
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+
+            if (filteredStock.length > 0) {
+                let table = `<table>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Color</th>
+                        <th>Talla</th>
+                        <th>Stock</th>
+                    </tr>`;
+
+                filteredStock.forEach(item => {
+                    table += `<tr>
+                        <td>${item.modelo}</td>
+                        <td>${item.color}</td>
+                        <td>${item.talla}</td>
+                        <td>${item.stock}</td>
+                    </tr>`;
+                });
+
+                table += `</table>`;
+                resultDiv.innerHTML = table;
+            } else {
+                resultDiv.innerHTML = `<p>No se encontró stock para el código: <strong>${code}</strong> en la sucursal seleccionada.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
